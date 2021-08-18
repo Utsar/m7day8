@@ -1,8 +1,9 @@
-import {Form, FormControl, Row, Button} from 'react-bootstrap';
+import {Form, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import "../Styles/MainSearch.css"
-import {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
 
-import { ChangeEvent } from 'react';
+import { ChangeEvent, FormEvent } from 'react';
 import {Result}from "../Types/Result";
 
 export const MainSearch = () => {
@@ -12,43 +13,63 @@ export const MainSearch = () => {
 
 
       const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
         console.log(e.target.value)
         setQuery(e.target.value)
     }
-    const handleClick = () => {
-        console.log(results)
-        console.log(query);
-      };
+
 
     const url = `https://striveschool-api.herokuapp.com/api/deezer/search?q=`
 
-    useEffect(() => {
-        const getResults = async () => {
+    
+        const handleClick = async (e: FormEvent) => {
+            e.preventDefault()
         try {
-          let response = await fetch(url + query)
+          const response = await fetch(url + query)
           console.log(response)
-          let data = await response.json()
+          const data = await response.json()
           console.log(data)
-          setResults(data)
+          setResults(data.results)
         } catch (error) {}
           
-        }
-        getResults()
-      },[]);
+    }
+ 
 
 
     return (
         <>
-        <Row >
-
-            <Form inline className="mainSearchBar">
-      <FormControl type="text" placeholder="Search" value={query}
-                onInput={handleInput} className="mr-2" />
-      <Button variant="outline-success" onClick={handleClick}>Search</Button>
-    </Form>
+        <Row className="mainSearchBar">
+            <Col>
+                <Form inline >
+                    <FormControl type="text" 
+                    placeholder="Search" 
+                    value={query}
+                    onInput={handleInput} 
+                    className="mr-2" />
+                        <Button variant="outline-success" onClick={handleClick}>Search</Button>
+                </Form>
+            </Col>
         </Row>
-            
+        <Col>
+        <Row>
+            {
+                results.map((result, index) => {
+                    
+                   
+                        <Card>
+                            <Card.Img variant="top" src={result.album.cover_medium} />
+                            <Card.Body>
+                                <Card.Title>{result.title}</Card.Title>
+                                <Card.Text>
+                                    {result.artist.name}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+              
+                })
+            }
+        </Row>
+            </Col>
         </>
     )
 }
+        
