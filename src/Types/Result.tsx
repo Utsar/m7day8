@@ -10,7 +10,7 @@ export interface Result {
     }
     album: {
         title: string
-        cover_big: string
+        cover_medium: string
 
     }
 }
